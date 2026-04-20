@@ -3,6 +3,7 @@ package mcan.reservaspadel.controllers;
 import mcan.reservaspadel.dto.CreateReservaDTO;
 import mcan.reservaspadel.dto.ReservaResponseDTO;
 import mcan.reservaspadel.services.ReservaService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,20 +20,20 @@ public class ReservaController {
     }
 
     @PostMapping
+    @PreAuthorize("isAuthenticated()")
     public ReservaResponseDTO crearReserva(@RequestBody CreateReservaDTO dto) {
         return reservaService.crearReserva(dto);
     }
 
-    @GetMapping("/usuario/{id}")
-    public List<ReservaResponseDTO> getReservasUsuario(@PathVariable Long id) {
-        return reservaService.obtenerReservasUsuario(id);
+    @GetMapping("/usuario")
+    @PreAuthorize("isAuthenticated()")
+    public List<ReservaResponseDTO> getReservasUsuario() {
+        return reservaService.obtenerReservasUsuario();
     }
 
     @DeleteMapping("/{reservaId}")
-    public void cancelarReserva(
-            @PathVariable Long reservaId,
-            @RequestParam Long usuarioId
-    ) {
-        reservaService.cancelarReserva(reservaId, usuarioId);
+    @PreAuthorize("isAuthenticated()")
+    public void cancelarReserva(@PathVariable Long reservaId) {
+        reservaService.cancelarReserva(reservaId);
     }
 }

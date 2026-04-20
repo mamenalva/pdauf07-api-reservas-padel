@@ -10,6 +10,8 @@ Aplicación que permite gestionar reservas de pistas de pádel con control de ho
 - Spring Boot
 - Spring Data JPA
 - MySQL
+- Spring Security
+- JWT (JSON Web Tokens)
 - Lombok
 
 ## 🎾 Funcionalidades actuales
@@ -27,4 +29,21 @@ Aplicación que permite gestionar reservas de pistas de pádel con control de ho
 - 22:00 - 23:30
 
 ## 🚧 Estado del proyecto
-Backend funcional. Autenticación JWT en desarrollo.
+Backend funcional con autenticación JWT implementada.
+
+## 🔐 Autenticación JWT
+La API utiliza autenticación basada en tokens JWT para proteger los endpoints.
+
+### Endpoints públicos
+- `POST /api/auth/register` - Registro de nuevos usuarios
+- `POST /api/auth/login` - Inicio de sesión
+
+### Uso de tokens
+Para acceder a endpoints protegidos, incluye el token en el header:
+```
+Authorization: Bearer <token>
+```
+
+### Roles
+- **USER**: Usuario estándar (por defecto)
+- **ADMIN**: Administrador (permisos extendidos)

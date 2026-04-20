@@ -12,7 +12,7 @@ Este documento describe las especificaciones técnicas y reglas para el desarrol
 - **MySQL**: Base de datos relacional
 - **Spring Security**: Para autenticación y autorización
 - **JWT (JSON Web Tokens)**: Para autenticación stateless
-- **JJWT**: Librería para manejo de tokens JWT
+- **JJWT**: Librería para manejo de tokens JWT (versión 0.12.5)
 - **Lombok**: Para reducción de código boilerplate
 - **Maven**: Gestión de dependencias y construcción
 
@@ -159,3 +159,13 @@ El proyecto sigue una arquitectura por capas clara y modular:
 
 # Personalizado
 - Incluye en este archivo los cambios después de cada implementación que te solicite(nuevas entidades, nuevos endpoinst...)
+- Implementado sistema completo de autenticación JWT:
+  - Dependencias JJWT agregadas al pom.xml
+  - JwtUtils implementado con generación, validación y extracción de tokens
+  - Campo role agregado a Usuario entity
+  - Campo role agregado a RegisterRequestDTO y UsuarioResponseDTO
+  - AuthController creado con endpoints /api/auth/register y /api/auth/login
+  - @PreAuthorize agregado a ReservaController y PistaController
+  - PistaController actualizado para usar PistaResponseDTO
+  - ReservaService actualizado para obtener usuario desde SecurityContextHolder
+  - Propiedades JWT agregadas a application.properties

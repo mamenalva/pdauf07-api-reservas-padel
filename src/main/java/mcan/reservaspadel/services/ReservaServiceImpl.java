@@ -8,6 +8,8 @@ import mcan.reservaspadel.entities.Usuario;
 import mcan.reservaspadel.repositories.PistaRepository;
 import mcan.reservaspadel.repositories.ReservaRepository;
 import mcan.reservaspadel.repositories.UsuarioRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,8 +33,7 @@ public class ReservaServiceImpl implements ReservaService {
     @Override
     public ReservaResponseDTO crearReserva(CreateReservaDTO dto) {
 
-        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Usuario usuario = getCurrentUsuario();
 
         Pista pista = pistaRepository.findById(dto.getPistaId())
                 .orElseThrow(() -> new RuntimeException("Pista no encontrada"));
@@ -59,25 +60,36 @@ public class ReservaServiceImpl implements ReservaService {
     }
 
     @Override
-    public List<ReservaResponseDTO> obtenerReservasUsuario(Long usuarioId) {
+    public List<ReservaResponseDTO> obtenerReservasUsuario() {
 
-        return reservaRepository.findByUsuarioId(usuarioId)
+        Usuario usuario = getCurrentUsuario();
+
+        return reservaRepository.findByUsuarioId(usuario.getId())
                 .stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void cancelarReserva(Long reservaId, Long usuarioId) {
+    public void cancelarReserva(Long reservaId) {
+
+        Usuario usuario = getCurrentUsuario();
 
         Reserva reserva = reservaRepository.findById(reservaId)
                 .orElseThrow(() -> new RuntimeException("Reserva no encontrada"));
 
-        if (!reserva.getUsuario().getId().equals(usuarioId)) {
+        if (!reserva.getUsuario().getId().equals(usuario.getId())) {
             throw new RuntimeException("No puedes cancelar esta reserva");
         }
 
         reservaRepository.delete(reserva);
+    }
+
+    private Usuario getCurrentUsuario() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
     // MAPPER (ENTIDAD → DTO)
